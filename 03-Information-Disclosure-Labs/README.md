@@ -2,6 +2,12 @@
 
 Professional PoC writeups for PortSwigger Web Security Academy's Information Disclosure labs (01–05).
 
+## 🧠 Start Here
+
+Before jumping into the lab writeups, read the **[Pentester Mindset — Information Disclosure](./METHODOLOGY.md)** doc. It explains how to *think* about this vulnerability class — where leaks hide, how to elicit them, and how to judge real severity — rather than just the specific payloads used in each lab.
+
+## 📋 Lab Index
+
 | # | Lab | Type | Severity | File |
 |---|---|---|---|---|
 | 01 | Information Disclosure in Error Messages | Information Disclosure — Verbose Error Messages | Low | [Lab-01-Information-Disclosure-in-Error-Messages.md](./Lab-01-Information-Disclosure-in-Error-Messages.md) |
