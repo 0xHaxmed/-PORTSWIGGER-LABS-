@@ -2,6 +2,12 @@
 
 Professional PoC writeups for PortSwigger Web Security Academy's Path Traversal labs (01–06).
 
+## 🧠 Start Here
+
+Before jumping into the lab writeups, read the **[Pentester Mindset — Path Traversal](./METHODOLOGY.md)** doc. It explains how to *think* about this vulnerability class — what makes a parameter suspicious, the standard bypass escalation order, and what to do once you get a file read — rather than just the specific payloads used in each lab.
+
+## 📋 Lab Index
+
 | # | Lab | Type | Severity | File |
 |---|---|---|---|---|
 | 01 | File Path Traversal, Simple Case | Path Traversal — No Sanitization | High | [Lab-01-File-Path-Traversal-Simple-Case.md](./Lab-01-File-Path-Traversal-Simple-Case.md) |
