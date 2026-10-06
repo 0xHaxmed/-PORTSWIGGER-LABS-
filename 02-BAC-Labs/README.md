@@ -2,6 +2,12 @@
 
 Professional PoC writeups for PortSwigger Web Security Academy's Broken Access Control labs (01–13).
 
+## 🧠 Start Here
+
+Before jumping into the lab writeups, read the **[Pentester Mindset — Broken Access Control](./METHODOLOGY.md)** doc. It explains how to *think* about this vulnerability class — what questions to ask, what to look for, and the general testing checklist — rather than just the specific payloads used in each lab.
+
+## 📋 Lab Index
+
 | # | Lab | Type | Severity | File |
 |---|---|---|---|---|
 | 01 | Unprotected Admin Functionality | Vertical Broken Access Control | High | [Lab-01-Unprotected-Admin-Functionality.md](./Lab-01-Unprotected-Admin-Functionality.md) |
