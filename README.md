@@ -12,6 +12,7 @@ Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Sec
 |---|---|---|---|
 | 02 | Broken Access Control | 13 labs | [02-BAC-Labs/](./02-BAC-Labs/) |
 | 03 | Information Disclosure | 5 labs | [03-Information-Disclosure-Labs/](./03-Information-Disclosure-Labs/) |
+| 04 | Path Traversal | 6 labs | [04-Path-Traversal-Labs/](./04-Path-Traversal-Labs/) |
 
 > More categories (SQL Injection, XSS, SSRF, Authentication, etc.) will be added here as separate folders, following the same structure.
 
@@ -24,12 +25,13 @@ PORTSWIGGER-LABS/
 ├── README.md                              ← you are here (category index)
 ├── 02-BAC-Labs/                            ← Broken Access Control
 │   ├── README.md
-│   ├── Lab-01-....md
-│   └── ...
+│   └── Lab-01-....md ...
 ├── 03-Information-Disclosure-Labs/         ← Information Disclosure
 │   ├── README.md
-│   ├── Lab-01-....md
-│   └── ...
+│   └── Lab-01-....md ...
+├── 04-Path-Traversal-Labs/                 ← Path Traversal
+│   ├── README.md
+│   └── Lab-01-....md ...
 └── ...
 ```
 
