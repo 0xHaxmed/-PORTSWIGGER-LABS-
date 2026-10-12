@@ -1,4 +1,4 @@
-# PortSwigger Web Security Academy — Writeups
+# WEB PENTEST LABS — Writeups
 
 Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Security Academy labs, organized by vulnerability category. Each category is a self-contained folder with its own index and individual lab writeups.
 
