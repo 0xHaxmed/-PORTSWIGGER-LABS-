@@ -14,8 +14,9 @@ Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Sec
 | 03 | Information Disclosure | 5 labs | [03-Information-Disclosure-Labs/](./03-Information-Disclosure-Labs/) |
 | 04 | Path Traversal | 6 labs | [04-Path-Traversal-Labs/](./04-Path-Traversal-Labs/) |
 | 05 | OS Command Injection | 5 labs (+ TryHackMe practical) | [05-OS-Command-Injection-Labs/](./05-OS-Command-Injection-Labs/) |
+| 06 | Server-Side Request Forgery (SSRF) | 7 labs | [06-SSRF-Labs/](./06-SSRF-Labs/) |
 
-> More categories (SQL Injection, XSS, SSRF, Authentication, etc.) will be added here as separate folders, following the same structure.
+> More categories (SQL Injection, XSS, Authentication, etc.) will be added here as separate folders, following the same structure.
 
 ---
 
@@ -40,7 +41,18 @@ PORTSWIGGER-LABS/
 │   ├── Lab-03-Blind-Output-Redirection.md
 │   ├── Lab-04-Blind-OOB-Interaction.md
 │   ├── Lab-05-Blind-OOB-Data-Exfiltration.md
-│   └── THM-Command-Injection-Practical.md
+│   ├── THM-Command-Injection-Practical.md
+│   └── METHODOLOGY.md
+├── 06-SSRF-Labs/                           ← Server-Side Request Forgery
+│   ├── README.md
+│   ├── Lab-01-Basic-SSRF-Local-Server.md
+│   ├── Lab-02-Basic-SSRF-Backend-System.md
+│   ├── Lab-03-Blacklist-Filter-Bypass.md
+│   ├── Lab-04-Open-Redirect-Filter-Bypass.md
+│   ├── Lab-05-Blind-SSRF-OOB-Detection.md
+│   ├── Lab-06-Whitelist-Filter-Bypass.md
+│   ├── Lab-07-Blind-SSRF-Shellshock.md
+│   └── METHODOLOGY.md
 └── ...
 ```
 
