@@ -10,7 +10,7 @@ Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Sec
 
 | # | Category | Labs Covered | Folder |
 |---|---|---|---|
-| 02 | Broken Access Control | 13 labs | [02-BAC-Labs/](./02-BAC-Labs/) |
+| 02 | Broken Access Control | 13 labs (+ TryHackMe practical) | [02-BAC-Labs/](./02-BAC-Labs/) |
 | 03 | Information Disclosure | 5 labs | [03-Information-Disclosure-Labs/](./03-Information-Disclosure-Labs/) |
 | 04 | Path Traversal | 6 labs | [04-Path-Traversal-Labs/](./04-Path-Traversal-Labs/) |
 | 05 | OS Command Injection | 5 labs (+ TryHackMe practical) | [05-OS-Command-Injection-Labs/](./05-OS-Command-Injection-Labs/) |
