@@ -13,6 +13,7 @@ Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Sec
 | 02 | Broken Access Control | 13 labs | [02-BAC-Labs/](./02-BAC-Labs/) |
 | 03 | Information Disclosure | 5 labs | [03-Information-Disclosure-Labs/](./03-Information-Disclosure-Labs/) |
 | 04 | Path Traversal | 6 labs | [04-Path-Traversal-Labs/](./04-Path-Traversal-Labs/) |
+| 05 | OS Command Injection | 5 labs (+ TryHackMe practical) | [05-OS-Command-Injection-Labs/](./05-OS-Command-Injection-Labs/) |
 
 > More categories (SQL Injection, XSS, SSRF, Authentication, etc.) will be added here as separate folders, following the same structure.
 
@@ -32,6 +33,14 @@ PORTSWIGGER-LABS/
 ├── 04-Path-Traversal-Labs/                 ← Path Traversal
 │   ├── README.md
 │   └── Lab-01-....md ...
+├── 05-OS-Command-Injection-Labs/           ← OS Command Injection
+│   ├── README.md
+│   ├── Lab-01-Simple-Case.md
+│   ├── Lab-02-Blind-Time-Delays.md
+│   ├── Lab-03-Blind-Output-Redirection.md
+│   ├── Lab-04-Blind-OOB-Interaction.md
+│   ├── Lab-05-Blind-OOB-Data-Exfiltration.md
+│   └── THM-Command-Injection-Practical.md
 └── ...
 ```
 
