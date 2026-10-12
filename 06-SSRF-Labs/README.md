@@ -34,6 +34,8 @@ SSRF is typically split into two classes:
 
 📘 **[tryhackme.md](./tryhackme.md)** — two TryHackMe rooms ("SSRF" and "Intro to SSRF"), explained task-by-task with every question broken down by *how* it's solved, plus a cross-reference back to the PortSwigger labs above.
 
+📘 **[AWS-IMDS-Deep-Dive.md](./AWS-IMDS-Deep-Dive.md)** — why SSRF becomes critical specifically on AWS: the Instance Metadata Service (IMDS), IAM role credential theft, IMDSv1 vs IMDSv2, safe local/sandbox lab scenarios, detection/mitigation, and real-world case studies (Capital One, GitLab CVE-2021-22214, Typebot GHSA-8gq9-rw7v-3jpr).
+
 ---
 
 ## 🧰 Quick Reference — Core Techniques
