@@ -15,6 +15,8 @@ Professional, structured Proof-of-Concept (PoC) writeups for PortSwigger Web Sec
 | 04 | Path Traversal | 6 labs (File-Inclusion-Path-Traversal-TryHackMe) | [04-Path-Traversal-Labs/](./04-Path-Traversal-Labs/) |
 | 05 | OS Command Injection | 5 labs (+ TryHackMe practical) | [05-OS-Command-Injection-Labs/](./05-OS-Command-Injection-Labs/) |
 | 06 | Server-Side Request Forgery (SSRF) | 7 labs (+ 2rooms TryHackMe +AWS-IMDS-Deep-Dive ) | [06-SSRF-Labs/](./06-SSRF-Labs/) |
+| 07 | File Upload | 7 labs + TryHackMe walkthrough | [07-File-Upload-Labs/](./07-File-Upload-Labs/) |
+
 
 > More categories (SQL Injection, XSS, Authentication, etc.) will be added here as separate folders, following the same structure.
 
