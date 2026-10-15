@@ -25,6 +25,7 @@ Welcome to the **Information Disclosure** vulnerability module.
 | **Root Cause (أسباب الثغرة)** | [🔍 AR/ROOT-CAUSE.md](./AR/ROOT-CAUSE.md) | [🔍 EN/ROOT-CAUSE.md](./EN/ROOT-CAUSE.md) |
 | **Remediation (طرق الحماية)** | [🛡️ AR/REMEDIATION.md](./AR/REMEDIATION.md) | [🛡️ EN/REMEDIATION.md](./EN/REMEDIATION.md) |
 | **Recon Study Guide** | [🎯 AR/THM-Information-Disclosure.md](./AR/THM-Information-Disclosure.md) | [🎯 EN/THM-Information-Disclosure.md](./EN/THM-Information-Disclosure.md) |
+| **HAXMED Cheat Sheet & Intelligence** | [⚡ Cheat Sheet / Reference](./INFORMATION-DISCLOSURE-INTELLIGENCE.md) | [⚡ Cheat Sheet / Reference](./INFORMATION-DISCLOSURE-INTELLIGENCE.md) |
 
 ---
 
