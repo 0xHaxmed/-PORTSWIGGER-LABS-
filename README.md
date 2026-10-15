@@ -19,14 +19,14 @@
 
 ## 📂 خريطة وفهرس الأقسام (01 إلى 06)
 
-| # | فئة الثغرة / Category | عدد اللابات | 🇪🇬 النسخة العربية | 🇬🇧 English Version | 🎯 تطبيق TryHackMe |
-|---|---|:---:|:---:|:---:|:---:|
-| **01** | **Broken Access Control** | 13 | [📂 تصفح بالعربي](./01-BAC-Labs/AR/README.md) | [📂 Browse in EN](./01-BAC-Labs/EN/README.md) | [BAC Guide](./01-BAC-Labs/AR/THM-Broken-Access-Control.md) • [IDOR Guide](./01-BAC-Labs/AR/THM-IDOR.md) |
-| **02** | **Information Disclosure** | 5 | [📂 تصفح بالعربي](./02-Information-Disclosure-Labs/AR/README.md) | [📂 Browse in EN](./02-Information-Disclosure-Labs/EN/README.md) | [Recon Guide](./02-Information-Disclosure-Labs/AR/THM-Information-Disclosure.md) |
-| **03** | **Path Traversal & LFI** | 6 | [📂 تصفح بالعربي](./03-Path-Traversal-Labs/AR/README.md) | [📂 Browse in EN](./03-Path-Traversal-Labs/EN/README.md) | [THM Guide](./03-Path-Traversal-Labs/AR/THM-File-Inclusion-Path-Traversal.md) |
-| **04** | **OS Command Injection** | 5 | [📂 تصفح بالعربي](./04-OS-Command-Injection-Labs/AR/README.md) | [📂 Browse in EN](./04-OS-Command-Injection-Labs/EN/README.md) | [THM Guide](./04-OS-Command-Injection-Labs/AR/THM-OS-Command-Injection.md) |
-| **05** | **Server-Side Request Forgery** | 7 | [📂 تصفح بالعربي](./05-SSRF-Labs/AR/README.md) | [📂 Browse in EN](./05-SSRF-Labs/EN/README.md) | [THM Guide](./05-SSRF-Labs/AR/THM-Server-Side-Request-Forgery.md) |
-| **06** | **File Upload Vulnerabilities** | 7 | [📂 تصفح بالعربي](./06-File-Upload-Labs/AR/README.md) | [📂 Browse in EN](./06-File-Upload-Labs/EN/README.md) | [THM Guide](./06-File-Upload-Labs/AR/THM-Upload-Vulnerabilities.md) |
+| # | فئة الثغرة / Category | عدد اللابات | 🇪🇬 النسخة العربية | 🇬🇧 English Version | 🎯 تطبيق TryHackMe | ⚡ HAXMED Intelligence |
+|---|---|:---:|:---:|:---:|:---:|:---:|
+| **01** | **Broken Access Control** | 13 | [📂 تصفح بالعربي](./01-BAC-Labs/AR/README.md) | [📂 Browse in EN](./01-BAC-Labs/EN/README.md) | [BAC Guide](./01-BAC-Labs/AR/THM-Broken-Access-Control.md) • [IDOR Guide](./01-BAC-Labs/AR/THM-IDOR.md) | [⚡ BAC Sheet](./01-BAC-Labs/BROKEN-ACCESS-CONTROL-INTELLIGENCE.md) |
+| **02** | **Information Disclosure** | 5 | [📂 تصفح بالعربي](./02-Information-Disclosure-Labs/AR/README.md) | [📂 Browse in EN](./02-Information-Disclosure-Labs/EN/README.md) | [Recon Guide](./02-Information-Disclosure-Labs/AR/THM-Information-Disclosure.md) | [⚡ Info Sheet](./02-Information-Disclosure-Labs/INFORMATION-DISCLOSURE-INTELLIGENCE.md) |
+| **03** | **Path Traversal & LFI** | 6 | [📂 تصفح بالعربي](./03-Path-Traversal-Labs/AR/README.md) | [📂 Browse in EN](./03-Path-Traversal-Labs/EN/README.md) | [File Inc Guide](./03-Path-Traversal-Labs/AR/THM-File-Inclusion.md) • [Adv LFI Guide](./03-Path-Traversal-Labs/AR/THM-File-Inclusion-Path-Traversal.md) | [⚡ Traversal Sheet](./03-Path-Traversal-Labs/PATH-TRAVERSAL-LFI-INTELLIGENCE.md) |
+| **04** | **OS Command Injection** | 5 | [📂 تصفح بالعربي](./04-OS-Command-Injection-Labs/AR/README.md) | [📂 Browse in EN](./04-OS-Command-Injection-Labs/EN/README.md) | [THM Guide](./04-OS-Command-Injection-Labs/AR/THM-OS-Command-Injection.md) | [⚡ Command Sheet](./04-OS-Command-Injection-Labs/COMMAND-INJECTION-INTELLIGENCE.md) |
+| **05** | **Server-Side Request Forgery** | 7 | [📂 تصفح بالعربي](./05-SSRF-Labs/AR/README.md) | [📂 Browse in EN](./05-SSRF-Labs/EN/README.md) | [THM Guide](./05-SSRF-Labs/AR/THM-Server-Side-Request-Forgery.md) | [⚡ SSRF Sheet](./05-SSRF-Labs/SSRF-INTELLIGENCE.md) |
+| **06** | **File Upload Vulnerabilities** | 7 | [📂 تصفح بالعربي](./06-File-Upload-Labs/AR/README.md) | [📂 Browse in EN](./06-File-Upload-Labs/EN/README.md) | [THM Guide](./06-File-Upload-Labs/AR/THM-Upload-Vulnerabilities.md) | [⚡ Upload Sheet](./06-File-Upload-Labs/FILE-UPLOAD-INTELLIGENCE.md) |
 
 ---
 
