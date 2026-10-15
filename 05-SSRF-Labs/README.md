@@ -26,6 +26,7 @@ Welcome to the **Server-Side Request Forgery (SSRF)** vulnerability module.
 | **Remediation (طرق الحماية)** | [🛡️ AR/REMEDIATION.md](./AR/REMEDIATION.md) | [🛡️ EN/REMEDIATION.md](./EN/REMEDIATION.md) |
 | **AWS IMDS Deep Dive** | [☁️ AR/AWS-IMDS-Deep-Dive.md](./AR/AWS-IMDS-Deep-Dive.md) | [☁️ EN/AWS-IMDS-Deep-Dive.md](./EN/AWS-IMDS-Deep-Dive.md) |
 | **TryHackMe Walkthrough** | [🎯 AR/THM-Server-Side-Request-Forgery.md](./AR/THM-Server-Side-Request-Forgery.md) | [🎯 EN/THM-Server-Side-Request-Forgery.md](./EN/THM-Server-Side-Request-Forgery.md) |
+| **HAXMED Cheat Sheet & Intelligence** | [⚡ Cheat Sheet / Reference](./SSRF-INTELLIGENCE.md) | [⚡ Cheat Sheet / Reference](./SSRF-INTELLIGENCE.md) |
 
 ---
 
