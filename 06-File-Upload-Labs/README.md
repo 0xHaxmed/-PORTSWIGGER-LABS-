@@ -25,6 +25,7 @@ Welcome to the **File Upload Vulnerabilities** module.
 | **Root Cause (أسباب الثغرة)** | [🔍 AR/ROOT-CAUSE.md](./AR/ROOT-CAUSE.md) | [🔍 EN/ROOT-CAUSE.md](./EN/ROOT-CAUSE.md) |
 | **Remediation (طرق الحماية)** | [🛡️ AR/REMEDIATION.md](./AR/REMEDIATION.md) | [🛡️ EN/REMEDIATION.md](./EN/REMEDIATION.md) |
 | **TryHackMe Walkthrough** | [🎯 AR/THM-Upload-Vulnerabilities.md](./AR/THM-Upload-Vulnerabilities.md) | [🎯 EN/THM-Upload-Vulnerabilities.md](./EN/THM-Upload-Vulnerabilities.md) |
+| **HAXMED Cheat Sheet & Intelligence** | [⚡ Cheat Sheet / Reference](./FILE-UPLOAD-INTELLIGENCE.md) | [⚡ Cheat Sheet / Reference](./FILE-UPLOAD-INTELLIGENCE.md) |
 
 ---
 
