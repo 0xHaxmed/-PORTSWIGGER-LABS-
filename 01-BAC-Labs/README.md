@@ -26,6 +26,7 @@ Welcome to the **Broken Access Control** vulnerability module.
 | **Remediation (طرق الحماية)** | [🛡️ AR/REMEDIATION.md](./AR/REMEDIATION.md) | [🛡️ EN/REMEDIATION.md](./EN/REMEDIATION.md) |
 | **THM: Broken Access Control** | [🎯 AR/THM-Broken-Access-Control.md](./AR/THM-Broken-Access-Control.md) | [🎯 EN/THM-Broken-Access-Control.md](./EN/THM-Broken-Access-Control.md) |
 | **THM: IDOR (Insecure Direct Object References)** | [🎯 AR/THM-IDOR.md](./AR/THM-IDOR.md) | [🎯 EN/THM-IDOR.md](./EN/THM-IDOR.md) |
+| **HAXMED Cheat Sheet & Intelligence** | [⚡ Cheat Sheet / Reference](./BROKEN-ACCESS-CONTROL-INTELLIGENCE.md) | [⚡ Cheat Sheet / Reference](./BROKEN-ACCESS-CONTROL-INTELLIGENCE.md) |
 
 ---
 
