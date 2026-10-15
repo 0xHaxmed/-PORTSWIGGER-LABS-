@@ -1,127 +1,246 @@
-# TryHackMe — "Upload Vulnerabilities" Room: Solving Guide
+# TryHackMe — "Upload Vulnerabilities" Room: Study Guide
 
 [![Platform](https://img.shields.io/badge/Platform-TryHackMe-red)](https://tryhackme.com/room/uploadvulns)
-[![Type](https://img.shields.io/badge/Type-Guided%20Walkthrough-blue)]()
+[![Type](https://img.shields.io/badge/Type-Guided%20Study%20Guide-blue)]()
 
-> Room link: [tryhackme.com/room/uploadvulns](https://tryhackme.com/room/uploadvulns) (Premium room)
+> Room link: [tryhackme.com/room/uploadvulns](https://tryhackme.com/room/uploadvulns)
 >
-> **This document explains *how* to approach and solve each task's questions — it deliberately does not give you the final flag values.** The flags are unique per-deployment anyway (they're generated fresh when you deploy the room's machine), so a hardcoded answer wouldn't work for you regardless. Use this as a guide for *method*, then run the steps yourself against your own deployed instance to get your own flags.
+> **This guide explains *how* to approach and solve every task — it does not give you flag values.** Flags are generated fresh per deployment, so a hardcoded answer would be useless to you anyway. What matters is the *method*: by the end of this room you should be able to recognize, probe, and bypass every major file-upload defense a real-world application might throw at you. This document is written so that reading it start to finish teaches you the vulnerability properly, independent of whether you have the room open.
 
 ---
 
-## Setup
+## 📖 Room Overview
 
-Deploy the attached machine, then add its IP to your `/etc/hosts` (Linux/macOS) or `C:\Windows\System32\drivers\etc\hosts` (Windows) under the hostnames the room specifies (`overwrite.uploadvulns.thm`, `shell.uploadvulns.thm`, `java.uploadvulns.thm`, `annex.uploadvulns.thm`, `magic.uploadvulns.thm`, `jewel.uploadvulns.thm`). The room gives you the exact command — just substitute your machine's assigned IP.
+The room deploys a single machine exposing **six separate mini-challenges**, each reachable via its own subdomain (you add them to your hosts file once at setup). Each subdomain demonstrates **one specific upload defense** and how it fails:
 
-## Task 4 — Overwriting Existing Files (`overwrite.uploadvulns.thm`)
+| Subdomain | Defense being demonstrated | Core lesson |
+|---|---|---|
+| `overwrite.uploadvulns.thm` | No filename collision protection | You can overwrite an existing file just by naming yours the same |
+| `shell.uploadvulns.thm` | No validation at all | Baseline RCE — the "null hypothesis" of upload security |
+| `java.uploadvulns.thm` | Client-side (JavaScript) validation only | Client-side checks are not security, they're UX |
+| `annex.uploadvulns.thm` | Server-side extension filtering | Blacklists and naive extension checks are incomplete |
+| `magic.uploadvulns.thm` | Server-side magic-number (content) checking | Even "real" validation can be spoofed at the byte level |
+| `jewel.uploadvulns.thm` | Multiple layered defenses + a different tech stack (Node.js) | Real targets combine defenses and may not even be PHP |
 
-**What the task is testing:** whether an upload form lets you overwrite a file that already exists on the server, simply by uploading a file with the same name.
+The room builds in difficulty deliberately: each task either removes a defense you just learned to bypass, or stacks a new one on top. By the final challenge you're expected to combine *everything* — fingerprinting the stack, enumerating hidden paths, defeating client-side checks, and layering extension + content bypasses together.
+
+**Tools used throughout:** Burp Suite (proxy/intercept, and viewing raw requests/responses), Gobuster (directory/file brute-forcing), a hex editor (`hexeditor`, pre-installed on Kali), a browser tech-fingerprinting extension (e.g. **Wappalyzer**), and — for two of the tasks — a web shell or reverse shell (PHP for most of the room, Node.js for the final challenge).
+
+---
+
+## Task 1 — Introduction
+
+Pure reading — no target. It frames the core idea: **any functionality that accepts a file from a user and later serves or processes it is a potential code-execution vector**, because the server has to trust, at some point, that the file is what it claims to be. The PHP example given (upload a raw `.php` file, have the PHP engine interpret it when requested) is the mental model for the entire room: validation exists specifically to prevent this trust from being misplaced.
+
+**✅ Why this task matters:** it sets the one-sentence definition you should carry through every other task: *upload vulnerabilities exist wherever "store this file" and "this file might get executed" overlap.*
+
+## Task 2 — General Methodology
+
+Also mostly conceptual, but it names your toolkit for the rest of the room:
+
+- **Gobuster**, for discovering upload directories and, later, randomly-named uploaded files.
+- **Burp Suite**, for intercepting and editing upload requests directly (bypassing any client-side logic entirely).
+- **A browser tech-fingerprinting extension** (e.g. **Wappalyzer**) — install it now. It will save you guesswork later (notably in the final challenge, where the backend isn't PHP).
+
+**How to "solve" it:** just install/confirm you have Gobuster, Burp, and a fingerprinting extension ready, then move on.
+
+**✅ Why this task matters:** real-world upload testing is never just "try payloads" — it's recon (what's the stack, where do files land) *first*, exploitation second. Skipping recon is the single most common reason people get stuck later in this room (and in real engagements).
+
+## Task 3 — Overwriting Existing Files (`overwrite.uploadvulns.thm`)
+
+**The question:** can you overwrite a file that already exists on the server simply by uploading a file with the same name?
 
 **How to approach it:**
-1. Browse to the site and view the page source to find where the displayed image is being loaded from (look for an `<img src="...">` tag) — this tells you both the filename and the directory it lives in.
-2. Find or create a replacement image file with the **exact same filename**.
-3. Use the upload form to submit your replacement.
-4. Reload the page — if the displayed image changed to yours, the overwrite succeeded and the flag should be revealed (either directly on the page, in the new image, or in the server's response).
+1. Load the page and check its source (`Ctrl+U` or Burp) for an `<img src="...">` tag — this tells you both the exact filename being displayed and the directory it's served from.
+2. Get or rename any image file on your system to that **exact same filename**.
+3. Submit it through the upload form.
+4. Reload the page. If the displayed image is now yours, the server accepted a same-named file and silently replaced the original — the overwrite succeeded, and a flag/confirmation should appear.
 
-**Question 1** asks for the filename being overwritten — this comes straight from the `<img>` tag you find in step 1.
-**Question 2** asks for the flag you receive after a successful overwrite — it appears once the overwrite is confirmed.
+**✅ Why this task matters:** this looks like a minor issue, but in real applications, predictable-filename overwrite can be used to replace configuration files, overwrite another user's avatar/document, or — combined with *any* execution bypass from later tasks — overwrite an already-validated file with malicious content after the fact. It's also a gentle introduction to "find the filename from the page source" as a recon habit you'll reuse for the rest of the room.
 
-## Task 5 — Remote Code Execution (`shell.uploadvulns.thm`)
+## Task 4 — Remote Code Execution (`shell.uploadvulns.thm`)
 
-**What the task is testing:** basic web shell / reverse shell upload against a site with no filtering at all.
+**The question:** this target has *no* filtering at all — can you get full command execution on the server?
 
 **How to approach it:**
-1. Run a directory brute-force scan first — this is explicitly called out as a good habit:
-   ```bash
-   gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://shell.uploadvulns.thm
-   ```
-   Note which directory looks like it's for storing uploads (this answers the Gobuster question).
-2. Confirm the backend is PHP (try uploading a legitimate image first and see where/how it's served).
-3. Write a minimal PHP web shell:
+1. Run Gobuster against the root of the site with a standard wordlist to discover the upload-serving directory (commonly something like `/uploads` or `/assets` — don't assume, confirm it).
+2. Write the smallest possible PHP web shell:
    ```php
-   <?php echo system($_GET["cmd"]); ?>
+   <?php echo system($_GET['cmd']); ?>
    ```
-   Upload it through the form.
-4. Navigate to the uploaded file's URL with a `cmd` parameter, e.g. `?cmd=whoami` or `?cmd=ls+/var/www/` to confirm execution and explore.
-5. Once you've confirmed command execution, either keep using the web shell's `cmd` parameter to `cat` the flag directly, **or** upload a full PHP reverse shell (e.g. the well-known pentestmonkey script — remember to edit the IP at the top to your TryHackMe `tun0` address) and catch it with a Netcat listener (`nc -lvnp <port>`) for an interactive session.
-6. Locate and read the flag file inside `/var/www/`.
+3. Upload it through the form — nothing should block it.
+4. Browse to the uploaded file's URL with a `cmd` parameter (e.g. `?cmd=whoami`, `?cmd=id`) to confirm command execution.
+5. For a cleaner, interactive session: download and edit a full PHP reverse shell (the well-known **pentestmonkey** script is the standard choice — just edit the IP at the top to your TryHackMe VPN/`tun0` address and pick a port), start a Netcat listener (`nc -lvnp <port>`) on that port, upload the reverse shell, and trigger it by visiting its URL.
+6. From your shell, navigate to the application's web root and locate the flag file.
 
-**Tip:** Viewing the page source rather than the rendered page often makes your shell's command output far easier to read.
+**✅ Why this task matters:** this is your baseline. Every later task in the room is "the same attack, with one more obstacle in the way." Understanding exactly what a completely unprotected upload looks like makes it much easier to recognize, later, exactly *which* defense you're up against when something unexpectedly fails.
 
-## Task 6 — Filtering (Theory, No Target)
+## Task 5 — Filtering (Theory, No Target)
 
-**What the task is testing:** understanding of core concepts before you start bypassing anything.
+Pure concept task covering the taxonomy of defenses you're about to fight: **client-side vs. server-side filtering**, and within server-side, the different validation types — extension, MIME type, magic number/content, file size, and filename handling. It also introduces **magic numbers** (file signature bytes) with the PNG example (`89 50 4E 47 0D 0A 1A 0A`).
 
-**How to approach it:** this task is purely conceptual — re-read the explanation of client-side vs. server-side filtering, and the different validation types (extension, MIME, magic number, length, filename). The three questions are directly definitional:
-- What language has traditionally dominated server-side web scripting?
-- What's the term for an extension-validation approach that only accepts a pre-approved list (the opposite of a blacklist)?
-- What MIME type does a `.csv` file typically report? (A quick search for "CSV MIME type" gives you this.)
+**How to approach the questions:**
+- *What language has traditionally dominated server-side web scripting?* — this is asking about the language most classic upload-RCE examples (including most of this room) are written in.
+- *What term describes an extension-validation list of only pre-approved values (the inverse of a blacklist)?* — a direct vocabulary question; think about what the opposite of "list of forbidden things" is called.
+- *What MIME type would a `.csv` file report?* — a quick web search for "CSV file MIME type" gives you this directly.
 
-## Task 7 — Bypassing Client-Side Filtering (`java.uploadvulns.thm`)
+**✅ Why this task matters:** naming these categories precisely matters because *your attack strategy depends entirely on which category you're up against*. "The upload failed" is not useful information on its own — "the upload failed because of an extension check" versus "...because of a magic-number check" leads to completely different next steps, which is exactly what the rest of the room drills into you.
 
-**What the task is testing:** that filtering which runs only in the browser provides no real security.
+## Task 6 — Bypassing Client-Side Filtering (`java.uploadvulns.thm`)
 
-**How to approach it:**
-1. Run Gobuster against the target first, as recommended, to discover the upload directory (it changes per-challenge).
-2. View the page's source / any loaded `.js` files to find the client-side validation logic. The room explicitly warns: *"not all client-side scripts are inline"* — meaning the validation might live in an external `.js` file rather than directly in the HTML. Check Burp's proxy history for all loaded resources, not just the main page.
-3. Once you've found the check (likely comparing `file.type` against an allowed MIME string), pick one of the four bypass approaches explained in the task:
-   - Disable JavaScript entirely in your browser.
-   - Intercept the **response** carrying the page/script in Burp (`Proxy → Intercept → "Do intercept" → "Response to this request"`) and strip or break the validation function before it loads.
-   - Let the page load normally, select a file that passes the client check, then intercept the **upload request itself** in Burp and swap the file's content/extension/MIME after the client-side gate already let it through.
-   - Skip the browser UI and `POST` directly to the upload endpoint with `curl`, supplying whatever filename/MIME/content you want.
-4. Get a shell uploaded and executing (same approach as Task 5), then read the flag from `/var/www/`.
-
-## Task 8 — Bypassing Server-Side Filtering: File Extensions (`annex.uploadvulns.thm`)
-
-**What the task is testing:** that a naive extension blacklist or substring check can be defeated once you understand *how* it's implemented.
-
-**How to approach it — this is a black-box enumeration exercise:**
-1. Establish a baseline: upload a legitimate image. Confirm it's accepted and find out how/where it's served.
-2. Try the obvious: upload `shell.php` directly. It will almost certainly be rejected — note the exact rejection message, it sometimes hints at *why*.
-3. Systematically test alternate PHP-executable extensions one at a time: `.php3`, `.php4`, `.php5`, `.php7`, `.phtml`, `.phar`, `.pht`. Some might upload successfully but fail to *execute* (meaning the extension passed the filter but Apache isn't configured to run it as PHP) — keep trying until you find one that both uploads **and** executes.
-4. If no single extension works, consider that the filter might be checking for a substring (e.g. "does `.jpg` appear anywhere in this filename?") rather than a strict suffix. Try a double extension: `shell.jpg.php`.
-5. Remember the task's own warning: this challenge has **randomized filenames**, and directory listing may be off. If your upload succeeds but you can't guess the path, Gobuster with the `-x` flag to append likely extensions to a wordlist of guesses can help locate it — or look closely at the upload response/confirmation message, which may reveal the generated name directly.
-6. Once your shell executes, retrieve the flag from `/var/www/`.
-
-## Task 9 — Bypassing Server-Side Filtering: Magic Numbers (`magic.uploadvulns.thm`)
-
-**What the task is testing:** bypassing content-based (not just extension-based) validation by faking a file signature.
+**The question:** this target rejects non-image files — but where is that check actually happening?
 
 **How to approach it:**
-1. Confirm that a plain `shell.php` is rejected but a legitimate image is accepted — this suggests content inspection, not just extension filtering.
-2. Pick a file signature for a format you'd expect to be allowed (the task specifically asks for **GIF** here — look up the GIF89a header bytes).
-3. Open your PHP shell file in a hex editor (`hexeditor` is pre-installed on Kali) and overwrite the very first bytes with the chosen magic number. Alternatively, prepend the equivalent ASCII characters directly at the top of a plain-text PHP file, then verify with the `file` command that it now reports as the spoofed type.
-4. Upload the modified file. If magic-number validation is the only content check in place, it should now be accepted.
-5. This challenge, like Task 8, uses a less-discoverable storage location (directory indexing is off) — run **Gobuster** to find candidate upload directories first (`/graphics`, `/assets`, etc., are hinted at), then work out your file's exact path from there.
-6. Trigger the shell directly via its URL and retrieve the flag from `/var/www/`.
+1. Try uploading a `.php` shell normally through the form — it gets rejected instantly, *before* any request is even sent (notice there's no network delay). That's your first clue it's client-side.
+2. Check the page source and any loaded `.js` files (Burp's proxy history will show every resource the page pulled in) for the validation logic — look for something checking `file.type` or the filename extension in JavaScript before the form submits.
+3. Once confirmed, you have several ways to bypass a purely client-side check — pick whichever is cleanest for your setup:
+   - **Disable JavaScript** in the browser entirely and submit the form normally.
+   - **Intercept the response** carrying the validation script in Burp (Proxy → set "Intercept" to catch responses, not just requests) and strip or neuter the check before it loads in your browser.
+   - Let the client-side check pass with an innocuous file, then **intercept the upload request itself** afterward in Burp and swap the filename/content/Content-Type to your real payload — the JS already did its job by the time Burp sees the request.
+   - Skip the browser entirely and **send the request directly** with a tool like `curl` or Burp Repeater, bypassing the page (and its JS) altogether.
+4. Once your shell uploads, locate it (check the response, or Gobuster common paths) and trigger it to get code execution, then retrieve the flag.
 
-## Task 10 — Example Methodology (Theory, No Target)
+**✅ Why this task matters:** this is the single most important lesson in the whole room — **client-side validation provides zero security**, full stop. It can improve UX (instant feedback without a round trip) but an attacker fully controls their own browser and request pipeline, so any check implemented only in JavaScript is, for security purposes, not implemented at all.
 
-No target to hack here — this task lays out a general step-by-step approach for file upload testing (fingerprint the stack → find the upload point → inspect client-side code → do a baseline legitimate upload and work out where it lands → attempt a malicious upload and read the error → use the error to infer which filter type is in play → test extension/magic-number/MIME/length filters one at a time to characterize them precisely). Internalize this flow — you'll need it unmodified for the final challenge.
+## Task 7 — Bypassing Server-Side Filtering: File Extensions (`annex.uploadvulns.thm`)
 
-## Task 11 — Challenge (`jewel.uploadvulns.thm`)
+**The question:** the server now validates extensions itself — can you still get code execution?
 
-**What the task is testing:** applying everything from Tasks 6–10 together, black-box, with no hints about which filters are active.
+**How to approach it — black-box enumeration, one variable at a time:**
+1. Confirm the baseline: a legitimate image uploads fine; a raw `.php` file is rejected *by the server* this time (check the timing/response — it's a real round trip now, unlike Task 6).
+2. The filter likely checks for the *presence* of an approved extension rather than strictly validating the *end* of the filename. Try a double extension first: `shell.jpg.php`.
+3. If that's blocked too, the filter may instead be blacklisting specific known-dangerous extensions. PHP can be executed through several alternate extensions depending on server config — try cycling through `.php3`, `.php4`, `.php5`, `.php7`, `.phtml`, `.pht` one at a time. A working bypass will both **upload successfully** *and* **execute** when requested — don't stop at "it uploaded," confirm it actually runs.
+4. This challenge intentionally obscures where your file lands (randomized names, no directory listing) — run **Gobuster** against the site to discover the upload directory, and note the exact filename echoed back in the upload confirmation message rather than guessing.
+5. Once you find an extension that both uploads and executes, trigger your shell and retrieve the flag.
 
-**How to approach it, following the Task 10 methodology exactly:**
-1. **Fingerprint first.** Load the site in Burp and check response headers (`Server`, `X-Powered-By`) — don't assume it's PHP; the room explicitly warns *"not all webservers have a PHP backend."*
-2. **Enumerate directories and endpoints.** Run Gobuster against the root, and separately against any interesting subdirectory you discover, ideally with a tailored or larger wordlist, and consider the `-x` flag.
-3. **Inspect the upload mechanism closely.** This challenge's upload may not be a traditional multipart form — check any loaded JavaScript for how the file is actually transmitted (hint: look for it being read and sent as part of a JSON payload rather than a standard file field).
-4. **Establish your baseline** with a known-good upload, and figure out exactly how uploaded files are named and where they're placed.
-5. **Layer your bypasses.** This challenge is explicitly described as combining multiple filters — work through extension bypasses, magic number spoofing, and MIME type changes as needed, testing one variable at a time.
-6. **If you get stuck:** the room links an official hints page and a full video walkthrough — use the hints incrementally to keep the learning value of the challenge.
-7. Once you achieve execution, retrieve the flag from `/var/www/`.
+**✅ Why this task matters:** this demonstrates why **blacklists are fundamentally incomplete** — they can only block extensions the developer thought of. A list that blocks `.php` but not `.php5` isn't a weaker version of a correct control, it's a different, broken control. This is also where the discipline of "upload succeeded ≠ upload executes" starts to matter — always verify execution, not just acceptance.
+
+## Task 8 — Bypassing Server-Side Filtering: Magic Numbers (`magic.uploadvulns.thm`)
+
+**The question:** this server inspects actual file *content*, not just the extension — can you still get a shell past it?
+
+**How to approach it:**
+1. Confirm a plain PHP shell is rejected even with a previously-successful extension trick — this is your signal that content (not just naming) is now being checked.
+2. Recall the magic-number concept from Task 5: every file format starts with a fixed, known byte signature. The server is almost certainly checking only the first few bytes of the upload, not the whole structure.
+3. Pick a target format — this challenge specifically expects a **GIF** (look up the GIF89a header signature; it's a short, well-known sequence of ASCII bytes you can find with a quick search).
+4. Open your PHP shell file in a hex editor (`hexeditor` on Kali) and **overwrite the very first bytes** with the chosen signature — the rest of the file (your actual PHP code) stays untouched afterward. Verify your work with the `file` command, which should now report your file as the spoofed type.
+5. Upload the modified file — if magic-number inspection is the *only* content check, it should now pass.
+6. This challenge also hides its storage location — Gobuster again to find the serving directory, then trigger your shell by its URL and retrieve the flag.
+
+**✅ Why this task matters:** this proves that "the server validates file content" doesn't automatically mean "the server validates the *whole* file." A check that only inspects the first few bytes is still trivially spoofable, because nothing stops the rest of the file from being anything you want — this is the conceptual stepping stone toward understanding polyglot files (covered in the PortSwigger lab series in this same repo category).
+
+## Task 9 — Example Methodology (Theory, No Target)
+
+No target — this task consolidates everything into a repeatable black-box process:
+
+1. **Fingerprint the stack** (don't assume PHP — check headers, use your browser's tech-fingerprinting extension).
+2. **Find the upload point** and inspect any client-side code around it.
+3. **Do a baseline legitimate upload** and work out exactly where/how it's served.
+4. **Attempt an obviously malicious upload** and read the rejection message carefully — it often hints at *which* layer blocked you.
+5. **Test extension, magic-number, MIME-type, and size filters one at a time**, changing only one variable per attempt, to precisely characterize what's actually being enforced before trying to bypass it.
+
+**✅ Why this task matters:** this is the room telling you, explicitly, "this is the checklist — memorize it." The final challenge gives you zero hints about which defenses are active, so this methodology is the only thing standing between you and blindly guessing.
+
+## Task 10 — Challenge (`jewel.uploadvulns.thm`)
+
+**The question:** a black-box target combining multiple defenses — and, as a twist, **not necessarily running PHP**. Apply the full methodology from Task 9 with no hand-holding.
+
+**How to approach it, step by step:**
+1. **Fingerprint first.** Check response headers (look specifically for anything revealing the backend framework) and your tech-fingerprinting extension's verdict on the page — don't assume this one is PHP like the rest of the room.
+2. **Enumerate the site structure with Gobuster.** Expect to find more than one directory of interest — one that's clearly for storing uploaded content, and at least one other administrative or functional page.
+3. **Inspect every loaded resource in Burp**, not just the main page — this challenge's client-side validation logic lives in a separate JavaScript file, and it's worth reading in full: it typically layers *multiple* independent client-side checks together (e.g. size, magic number, and extension, all in the same script). Since this is purely client-side, the same bypass approaches from Task 6 apply — most directly, intercepting the *response* carrying that script in Burp and neutralizing the checks before they load, so your real upload request goes through unmodified.
+4. **Establish a baseline upload** and figure out the server's filename-generation pattern. If the challenge provides its own specific wordlist for this room, that's a strong hint it's needed for Gobuster to actually guess the generated filename of your upload (rather than a generic wordlist) — uploaded names won't be predictable otherwise.
+5. **Confirm the actual backend technology** once your fingerprinting narrows it down, and make sure your shell/payload matches that language runtime — a PHP web shell is useless against a non-PHP backend.
+6. **Look at how execution is actually triggered on this target.** Unlike the PHP-based tasks, simply requesting the uploaded file's URL may not run it — look for a separate administrative feature that loads/activates a file from the upload-serving directory as if it were application code (a "module" or "plugin" loading mechanism is a common pattern), and consider whether path traversal is needed to reach your uploaded file from wherever that feature expects files to be.
+7. **Combine the bypasses** needed for whichever client-side and server-side checks you identified, upload your payload, locate its real stored name via Gobuster, trigger it through the execution mechanism you found, and catch your shell with a listener on the correct port.
+8. Retrieve the flag from the system once you have command execution.
+
+**✅ Why this task matters:** this is deliberately the hardest task because it's the most realistic one. Real targets rarely tell you their stack or their exact defenses — you have to discover both from scratch, and a single wrong assumption (e.g. "it must be PHP") can send you down a dead end for a long time. Succeeding here means you've internalized the methodology, not just memorized a sequence of payloads.
 
 ---
 
-## General Tips That Apply Across the Whole Room
+## 📋 Full Cheat Sheet
 
-- **Always view source / check Burp history for *every* loaded resource**, not just the page you're looking at — client-side filters often live in separate `.js` files.
-- **Gobuster is your friend for almost every task** — run it early, and don't forget the `-x` flag when you suspect extension-based naming or storage.
-- **Change one variable at a time** when probing a black-box filter (extension, then MIME, then content) so you can tell exactly which check you defeated.
-- **Check the actual response body**, not just whether the browser renders something — a shell's output is often visible in the raw HTML/response even if the page "looks broken."
-- If your reverse shell script needs editing (e.g. pentestmonkey's PHP reverse shell), **double-check the IP and port** match your TryHackMe VPN (`tun0`) address and your active Netcat listener before uploading.
+A consolidated reference for everything covered in this room — organized so you can scan it quickly during a real engagement or CTF.
+
+### Recon Checklist (Do This First, Every Time)
+- [ ] Fingerprint the backend (response headers like `X-Powered-By`/`Server`; browser tech-fingerprinting extension). **Never assume PHP.**
+- [ ] Run Gobuster against the site root with a solid wordlist to find upload/asset directories.
+- [ ] Check page source and *every* loaded `.js` file (Burp proxy history) for client-side validation logic.
+- [ ] Upload a legitimate file first to establish a baseline: where does it land, how is it named, how is it served?
+- [ ] Attempt an obvious malicious upload and read the exact rejection message — it often reveals which layer blocked you.
+
+### Client-Side Bypass Techniques
+| Technique | When to use it |
+|---|---|
+| Disable JavaScript in the browser | Fastest option when the site still functions without JS |
+| Intercept the *response* carrying the validation script in Burp, strip/neuter it | When you need the page to keep working but want the check gone |
+| Let the client-side check pass with a safe file, then intercept and swap the real upload request in Burp | When the client-side logic is hard to disable cleanly |
+| Send the request directly with `curl` or Burp Repeater, skipping the page entirely | Fastest, most reliable option once you know the request format |
+
+### Server-Side Extension Bypass Techniques
+```
+Double extension:        shell.jpg.php
+Alternate PHP extensions: .php3  .php4  .php5  .php7  .phtml  .pht  .phar
+.htaccess handler hijack (Apache):
+    AddType application/x-httpd-php .l33t
+    (then upload your shell as .l33t)
+Null byte truncation (legacy PHP < 5.3.4):
+    shell.php%00.jpg
+Path traversal in filename (escape a non-executing directory):
+    ../exploit.php
+    ..%2fexploit.php     (URL-encoded, to dodge pre-decode stripping)
+```
+
+### Content / Magic-Number Bypass Techniques
+| Format | Magic Bytes (hex) |
+|---|---|
+| JPEG | `FF D8 FF DB` |
+| PNG | `89 50 4E 47 0D 0A 1A 0A` |
+| GIF87a | `47 49 46 38 37 61` |
+| GIF89a | `47 49 46 38 39 61` |
+
+Overwrite only the **first bytes** of your payload file with the target signature using a hex editor; verify with `file <filename>`. Everything after the signature remains your actual payload.
+
+For validation that genuinely parses the whole file structure (not just the header), a **polyglot** is needed — e.g. embedding PHP in a real image's EXIF `Comment` field via ExifTool:
+```bash
+exiftool -Comment='<?php echo "START " . file_get_contents("/path/to/secret") . " END"; ?>' input.jpg -o polyglot.php
+```
+
+### MIME Type (Content-Type) Bypass
+In the multipart upload body, the declared type is entirely client-controlled — simply change:
+```
+Content-Type: application/x-php
+```
+to an accepted value, e.g.:
+```
+Content-Type: image/jpeg
+```
+
+### Basic Payloads
+```php
+<?php echo system($_GET['cmd']); ?>
+```
+```php
+<?php echo file_get_contents('/path/to/target/file'); ?>
+```
+For interactive access: use a full reverse shell script (e.g. pentestmonkey's PHP reverse shell, or an equivalent for the target language), edit the IP/port at the top to match your listener, and catch it with:
+```bash
+nc -lvnp <port>
+```
+
+### Finding Where Your File Landed
+- Check the upload confirmation response for a direct path or filename.
+- Try common predictable paths first: `/uploads/`, `/files/`, `/assets/`, `/content/`, `/graphics/`.
+- If the filename is randomized or obfuscated, Gobuster with a wordlist (including any challenge-specific wordlist provided) and the `-x` flag (to also try extensions) is the standard approach.
+- Check for directory listing being enabled on likely candidates.
+
+### General Discipline
+- **Change one variable at a time** when probing a black-box filter (extension → then content → then MIME) so you know exactly which check you defeated.
+- **"Uploaded" ≠ "executes."** Always confirm the file actually runs, not just that the server accepted it.
+- **Don't assume the stack.** Fingerprint before picking a payload language.
+- **Read rejection messages carefully.** They frequently leak which validation layer is active.
 
 ---
 
-*This guide is a method reference for the TryHackMe "Upload Vulnerabilities" room, written for self-study. It intentionally omits flag values since they are unique per deployment — work through each step against your own running instance.*
+*This guide is a method and reference document for the TryHackMe "Upload Vulnerabilities" room, written for self-study. It intentionally omits flag values since they are unique per deployment — work through each task against your own running instance to retrieve yours.*
