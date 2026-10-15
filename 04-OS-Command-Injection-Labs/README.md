@@ -25,6 +25,7 @@ Welcome to the **OS Command Injection** vulnerability module.
 | **Root Cause (أسباب الثغرة)** | [🔍 AR/ROOT-CAUSE.md](./AR/ROOT-CAUSE.md) | [🔍 EN/ROOT-CAUSE.md](./EN/ROOT-CAUSE.md) |
 | **Remediation (طرق الحماية)** | [🛡️ AR/REMEDIATION.md](./AR/REMEDIATION.md) | [🛡️ EN/REMEDIATION.md](./EN/REMEDIATION.md) |
 | **TryHackMe Walkthrough** | [🎯 AR/THM-OS-Command-Injection.md](./AR/THM-OS-Command-Injection.md) | [🎯 EN/THM-OS-Command-Injection.md](./EN/THM-OS-Command-Injection.md) |
+| **HAXMED Cheat Sheet & Intelligence** | [⚡ Cheat Sheet / Reference](./COMMAND-INJECTION-INTELLIGENCE.md) | [⚡ Cheat Sheet / Reference](./COMMAND-INJECTION-INTELLIGENCE.md) |
 
 ---
 
